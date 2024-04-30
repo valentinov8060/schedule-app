@@ -44,10 +44,9 @@ const list = async (req, res, next) => {
       page: req.query.page,
       size: req.query.size
     }
-    console.log(queryParamsValues)
     const view = await listSchedule(queryParamsValues)
     res.status(200).json({
-      view
+      data: view
     })
   } catch (error) {
     next(error)

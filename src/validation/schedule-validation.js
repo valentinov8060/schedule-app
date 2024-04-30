@@ -1,8 +1,8 @@
 import Joi from "joi";
 
-const authorizationValidationSchema = Joi.string().max(36).required()
+const authorizationValidationSchema = Joi.string().min(36).max(36).required()
 
-const idMatkulPathValidationSchema = Joi.string().max(36).required()
+const idMatkulPathValidationSchema = Joi.string().min(36).max(36).required()
 
 const createScheduleValidationSchema = Joi.object({
   mata_kuliah: Joi.string().max(255).required(),

@@ -1,4 +1,3 @@
-import bycrypt from 'bcrypt'  
 import { connection } from "./connection.js";
 
 function getResult(query) {
@@ -12,9 +11,16 @@ function getResult(query) {
   });
 }
 
+export {
+  getResult
+}
+
+
+
+/* import bycrypt from 'bcrypt'
 const user = "2115061077"
 let password = "2115061077"
-password = bycrypt.hashSync(password, 10)
+password = bycrypt.hashSync(password, 10) */
 
 // add user
 /* connection.query(`INSERT INTO \`schedule-app\`.\`users\` (user, password) VALUES ('${user}', '${password}')`, (err) => {
@@ -24,28 +30,6 @@ password = bycrypt.hashSync(password, 10)
   }
 })
 connection.end() */
-
-// check user
-/* connection.query(`SELECT * FROM \`schedule-app\`.\`users\` WHERE user = '${user}'`, (err, result) => {
-  if (err) {
-    console.error('Error checking user:', err.message);
-    return;
-  }
-  console.log(result[0])
-}) 
-connection.end()
-*/
-
-// update token
-/* connection.query(`UPDATE \`schedule-app\`.\`users\` SET token = 'token1' WHERE user = '${user}'`, (err, result) => {
-  if (err) {
-    console.error('Error inserting user:', err.message);
-    return;
-  }
-  console.log(result)
-}) 
-connection.end()
-*/
 
 // example how to use fetchData function
 /* async function main () {
@@ -86,7 +70,3 @@ connection.end()
   console.log(paginateArray(sechedules, 2, 2))
 }  */
 /* main() */
-
-export {
-  getResult
-}

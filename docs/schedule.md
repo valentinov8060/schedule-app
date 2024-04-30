@@ -12,30 +12,32 @@ Response Body Success :
 
 ```json
 {
-  "data" : [
-    {
-      "mata_kuliah" : "METODOLOGI PENELITIAN	",
-      "nama_kelas" : "MP-A",
-      "sks" : "2",
-      "hari" : "selasa",
-      "jam_mulai" : "08:00",
-      "jam_selesai" : "09:00",
-      "ruangan" : "H18"
-    },
-    {
-      "mata_kuliah" : "METODOLOGI PENELITIAN	",
-      "nama_kelas" : "MP-A",
-      "sks" : "2",
-      "hari" : "selasa",
-      "jam_mulai" : "08:00",
-      "jam_selesai" : "09:00",
-      "ruangan" : "H18"
+  "data" : {
+    "schedules" : [
+      {
+        "mata_kuliah" : "METODOLOGI PENELITIAN	",
+        "nama_kelas" : "MP-A",
+        "sks" : "2",
+        "hari" : "selasa",
+        "jam_mulai" : "080000",
+        "jam_selesai" : "090000",
+        "ruangan" : "H18"
+      },
+      {
+        "mata_kuliah" : "METODOLOGI PENELITIAN	",
+        "nama_kelas" : "MP-A",
+        "sks" : "2",
+        "hari" : "selasa",
+        "jam_mulai" : "080000",
+        "jam_selesai" : "090000",
+        "ruangan" : "H18"
+      }
+    ],
+    "paging" : {
+      "page" : 1,
+      "total_page" : 3,
+      "total_data" : 30
     }
-  ],
-  "paging" : {
-    "page" : 1,
-    "total_page" : 3,
-    "total_data" : 30
   }
 }
 ```
@@ -63,8 +65,8 @@ Request Body :
   "nama_kelas" : "MP-A",
   "sks" : "2",
   "hari" : "selasa",
-  "jam_mulai" : "08:00",
-  "jam_selesai" : "09:00",
+  "jam_mulai" : "080000",
+  "jam_selesai" : "090000",
   "ruangan" : "H18"
 }
 ```
@@ -80,8 +82,8 @@ Response Body Success :
     "nama_kelas" : "MP-A",
     "sks" : "2",
     "hari" : "selasa",
-    "jam_mulai" : "08:00",
-    "jam_selesai" : "09:00",
+    "jam_mulai" : "080000",
+    "jam_selesai" : "090000",
     "ruangan" : "H18"
   }
 }
@@ -110,8 +112,8 @@ Request Body :
   "nama_kelas" : "MP-A",
   "sks" : "2",
   "hari" : "selasa",
-  "jam_mulai" : "08:00",
-  "jam_selesai" : "09:00",
+  "jam_mulai" : "080000",
+  "jam_selesai" : "090000",
   "ruangan" : "H18"
 }
 ```
@@ -127,8 +129,8 @@ Response Body Success :
     "nama_kelas" : "MP-A",
     "sks" : "2",
     "hari" : "selasa",
-    "jam_mulai" : "08:00",
-    "jam_selesai" : "09:00",
+    "jam_mulai" : "080000",
+    "jam_selesai" : "090000",
     "ruangan" : "H18"
   }
 }

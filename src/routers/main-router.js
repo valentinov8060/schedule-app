@@ -6,7 +6,7 @@ import { errorResponse } from '../middleware/error-middleware.js';
 
 const app = express();
 
-// mem-parse body permintaan HTTP yang berformat JSON ke dalam objek dan tersedia pada req.body
+// parse HTTP request body yang berformat JSON ke dalam objek dan tersedia pada req.body
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 
