@@ -7,6 +7,7 @@ const publicRouter = new express.Router();
 
 publicRouter.post('/user/login', userController.login);
 publicRouter.get('/schedule/list', scheduleController.list);
+publicRouter.get('/schedule/user/:user', scheduleController.getUser);
 
 export {
   publicRouter

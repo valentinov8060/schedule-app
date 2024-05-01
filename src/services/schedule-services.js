@@ -7,7 +7,8 @@ import {
   idMatkulPathValidationSchema,
   createScheduleValidationSchema,
   updateScheduleValidationSchema,
-  listScheduleValidationSchema
+  listScheduleValidationSchema,
+  getUserScheduleValidationSchema
 } from "../validation/schedule-validation.js";
 import { ResponseError } from "../error/error.js";
 
@@ -214,9 +215,48 @@ const listSchedule = async (path) => {
   }
 }
 
+const getUserSchedule = async (pathUser) => {
+  // check query path
+  const userValidation = validation(getUserScheduleValidationSchema, pathUser)
+  // check user from table
+  const queryCheckUser = `SELECT user FROM \`schedule-app\`.\`users\` WHERE user = '${userValidation}'`
+  await getResult(queryCheckUser)
+    .then(result => result[0].user)
+    .catch(error => {
+      throw new ResponseError (401, 'Error, user not found: ' + error.message) 
+    })
+
+  // get data
+  const queryGetUserSchedule = `SELECT mata_kuliah, nama_kelas, sks, hari, jam_mulai, jam_selesai, ruangan FROM \`schedule-app\`.\`schedules\` WHERE user = '${userValidation}'`
+  const sechedules = await getResult(queryGetUserSchedule)
+    .then(result => result)
+    .catch(error => {
+      throw new ResponseError (501, 'Error getting schedule: ' + error.message)
+    })
+
+  // manage data
+  function getDayOrder(dayName) {
+    const daysOfWeek = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+    return daysOfWeek.indexOf(dayName);
+  }
+  function sortSchedules(a, b) {
+    if (getDayOrder(a.hari) > getDayOrder(b.hari)) return 1;
+    if (getDayOrder(a.hari) < getDayOrder(b.hari)) return -1;
+
+    if (a.jam_mulai > b.jam_mulai) return 1;
+    if (a.jam_mulai < b.jam_mulai) return -1;
+
+    return 0;
+  }
+  sechedules.sort(sortSchedules)
+
+  return sechedules
+}
+
 export {
   createSchedule,
   updateSchedule,
   removeSchedule,
-  listSchedule
+  listSchedule,
+  getUserSchedule
 }

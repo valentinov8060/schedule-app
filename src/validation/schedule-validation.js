@@ -29,10 +29,13 @@ const listScheduleValidationSchema = Joi.object({
   size: Joi.number().min(1).max(100).positive().default(10)
 })
 
+const getUserScheduleValidationSchema = Joi.string().max(255).required()
+
 export {
   authorizationValidationSchema,
   idMatkulPathValidationSchema,
   createScheduleValidationSchema,
   updateScheduleValidationSchema,
-  listScheduleValidationSchema
+  listScheduleValidationSchema,
+  getUserScheduleValidationSchema
 }

@@ -2,7 +2,8 @@ import {
   createSchedule,
   updateSchedule,
   removeSchedule,
-  listSchedule
+  listSchedule,
+  getUserSchedule
 } from "../services/schedule-services.js";
 
 const create = async (req, res, next) => {
@@ -53,9 +54,21 @@ const list = async (req, res, next) => {
   }
 }
 
+const getUser = async (req, res, next) => {
+  try {
+    const view = await getUserSchedule(req.params.user)
+    res.status(200).json({
+      data: view
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
 export default {
   create,
   update,
   remove,
-  list
+  list,
+  getUser
 }

@@ -166,3 +166,42 @@ Response Body Error :
   "errors" : "Jadwal tidak ditemukan"
 }
 ```
+
+## 5. Get User Schedule
+
+Endpoint : GET /schedule/user/:user
+
+Response Body Success :
+
+```json
+{
+  "data" : [
+    {
+      "mata_kuliah" : "METODOLOGI PENELITIAN	",
+      "nama_kelas" : "MP-A",
+      "sks" : "2",
+      "hari" : "selasa",
+      "jam_mulai" : "080000",
+      "jam_selesai" : "090000",
+      "ruangan" : "H18"
+    },
+    {
+      "mata_kuliah" : "METODOLOGI PENELITIAN	",
+      "nama_kelas" : "MP-A",
+      "sks" : "2",
+      "hari" : "selasa",
+      "jam_mulai" : "080000",
+      "jam_selesai" : "090000",
+      "ruangan" : "H18"
+    }
+  ]
+}
+```
+
+Response Body Error :
+
+```json
+{
+  "errors" : "Jadwal tidak ditemukan" 
+}
+```
