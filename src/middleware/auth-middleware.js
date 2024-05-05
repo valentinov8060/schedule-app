@@ -1,5 +1,4 @@
-import { getResult } from "../model/query.js"
-import { connection } from "../model/connection.js"
+import { executeQuery, executeParameterizedQuery } from "../model/query.js"
 
 const authMiddleware = async (req, res, next) => {
   const token = req.get('Authorization')
@@ -8,7 +7,7 @@ const authMiddleware = async (req, res, next) => {
       error: 'Unauthorized' 
     }).end()
   } else {
-    const user = await getResult(`SELECT user FROM \`schedule-app\`.\`users\` WHERE token = '${token}'`)
+    const user = await executeParameterizedQuery(`SELECT user FROM \`schedule-app\`.\`users\` WHERE token = ?`, [token])
       .then(result => result)
     if (!user) {
       res.status(401).json({ 

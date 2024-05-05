@@ -1,6 +1,6 @@
 import { connection } from "./connection.js";
 
-function getResult(query) {
+function executeQuery(query) {
   return new Promise((resolve, reject) => {
     connection.query(query, (err, result) => {
       if (err) {
@@ -11,8 +11,20 @@ function getResult(query) {
   });
 }
 
+function executeParameterizedQuery(query, values) {
+  return new Promise((resolve, reject) => {
+    connection.query(query, values, (err, result) => {
+      if (err) {
+        reject(err);
+      }
+      resolve(result);
+    });
+  });
+}
+
 export {
-  getResult
+  executeQuery,
+  executeParameterizedQuery
 }
 
 

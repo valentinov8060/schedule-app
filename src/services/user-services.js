@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt"
 import { v4 as uuidv4 } from 'uuid';
 
-import { getResult } from "../model/query.js";
+import { executeQuery, executeParameterizedQuery } from "../model/query.js";
 import { validation } from "../validation/validation.js";
 import { 
   loginUserValidationSchema, 
@@ -13,8 +13,12 @@ const loginUser = async (reqBody) => {
   // check request body
   const reqBodyValidation = validation(loginUserValidationSchema, reqBody)
   // check user from request body
-  const queryGetUserPasswordByReqBodyUser  = `SELECT * FROM \`schedule-app\`.\`users\` WHERE user = '${reqBodyValidation.user}'`
-  const getUserPasswordByReqBodyUser = await getResult(queryGetUserPasswordByReqBodyUser)
+  const queryGetUserPasswordByReqBodyUser = `
+    SELECT * FROM \`schedule-app\`.\`users\` 
+    WHERE user = ?;
+  `
+  const valuesGetUserPasswordByReqBodyUser = [reqBodyValidation.user]
+  const getUserPasswordByReqBodyUser = await executeParameterizedQuery(queryGetUserPasswordByReqBodyUser, valuesGetUserPasswordByReqBodyUser)
     .then(result => result[0])
     .catch(error => {
       return error.message
@@ -30,8 +34,13 @@ const loginUser = async (reqBody) => {
 
   // generate token
   const token = uuidv4();
-  const queryUpdateToken = `UPDATE \`schedule-app\`.\`users\` SET token = '${token}' WHERE user = '${reqBodyValidation.user}'`
-  await getResult(queryUpdateToken)
+  const queryUpdateToken = `
+    UPDATE \`schedule-app\`.\`users\` 
+    SET token = ?
+    WHERE user = ?;
+  `
+  const valuesUpdateToken = [token, reqBodyValidation.user]
+  await executeParameterizedQuery(queryUpdateToken, valuesUpdateToken)
     .catch(error => {
       throw new ResponseError (501, 'Error inserting token: ' + error.message)
     })
@@ -42,16 +51,25 @@ const logoutUser = async (reqBody) => {
   // check request body
   const authorizationValidation = validation(authorizationValidationSchema, reqBody)
   // check user from authorization token
-  const queryCheckUser = `SELECT user FROM \`schedule-app\`.\`users\` WHERE token = '${authorizationValidation}'`
-  await getResult(queryCheckUser)
+  const queryCheckUser = `
+    SELECT user FROM \`schedule-app\`.\`users\` 
+    WHERE token = ?
+  `
+  const valuesCheckUser = [authorizationValidation]
+  await executeParameterizedQuery(queryCheckUser, valuesCheckUser)
     .then(result => result[0].user)
     .catch(error => {
-      throw new ResponseError (401, 'Error, user not found: ' + error.message) 
+      throw new ResponseError (401, 'Error, user not found: ' + error.message)
     })
 
   // remove token
-  const queryRemoveToken = `UPDATE \`schedule-app\`.\`users\` SET token = NULL WHERE token = '${authorizationValidation}'`
-  await getResult(queryRemoveToken)
+  const queryRemoveToken = `
+    UPDATE \`schedule-app\`.\`users\` 
+    SET token = NULL 
+    WHERE token = ?
+  `
+  const valuesRemoveToken = [authorizationValidation]
+  await executeParameterizedQuery(queryRemoveToken, valuesRemoveToken)
     .catch(error => {
       throw new ResponseError (501, 'Error updating token: ' + error.message)
     })
