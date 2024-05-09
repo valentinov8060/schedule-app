@@ -27,7 +27,7 @@ Response Body Error :
 
 ```json
 {
-  "errors" : "User atau password salah"
+  "error" : "User atau password salah"
 }
 ```
 
@@ -51,6 +51,6 @@ Response Body Error :
 
 ```json
 {
-  "errors" : "Unauthorized"
+  "error" : "Unauthorized"
 }
 ```

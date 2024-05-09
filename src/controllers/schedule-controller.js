@@ -41,11 +41,7 @@ const remove = async (req, res, next) => {
 
 const list = async (req, res, next) => {
   try {
-    const queryParamsValues = {
-      page: req.query.page,
-      size: req.query.size
-    }
-    const view = await listSchedule(queryParamsValues)
+    const view = await listSchedule()
     res.status(200).json({
       data: view
     })

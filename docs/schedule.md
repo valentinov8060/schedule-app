@@ -2,43 +2,32 @@
 
 ## 1. List Schedule 
 
-Endpoint : GET /schedule/list?page=1&size=5
-
-Query params :
-- page : number of page, default 1
-- size : size per page, default 20
+Endpoint : GET /schedule/list
 
 Response Body Success :
 
 ```json
 {
-  "data" : {
-    "schedules" : [
-      {
-        "mata_kuliah" : "METODOLOGI PENELITIAN	",
-        "nama_kelas" : "MP-A",
-        "sks" : "2",
-        "hari" : "selasa",
-        "jam_mulai" : "080000",
-        "jam_selesai" : "090000",
-        "ruangan" : "H18"
-      },
-      {
-        "mata_kuliah" : "METODOLOGI PENELITIAN	",
-        "nama_kelas" : "MP-A",
-        "sks" : "2",
-        "hari" : "selasa",
-        "jam_mulai" : "080000",
-        "jam_selesai" : "090000",
-        "ruangan" : "H18"
-      }
-    ],
-    "paging" : {
-      "page" : 1,
-      "total_page" : 3,
-      "total_data" : 30
+  "data" : [
+    {
+      "mata_kuliah" : "METODOLOGI PENELITIAN	",
+      "nama_kelas" : "MP-A",
+      "sks" : "2",
+      "hari" : "selasa",
+      "jam_mulai" : "080000",
+      "jam_selesai" : "090000",
+      "ruangan" : "H18"
+    },
+    {
+      "mata_kuliah" : "METODOLOGI PENELITIAN	",
+      "nama_kelas" : "MP-A",
+      "sks" : "2",
+      "hari" : "selasa",
+      "jam_mulai" : "080000",
+      "jam_selesai" : "090000",
+      "ruangan" : "H18"
     }
-  }
+  ]
 }
 ```
 
@@ -46,7 +35,7 @@ Response Body Error :
 
 ```json
 {
-  "errors" : "Jadwal tidak ditemukan" 
+  "error" : "Jadwal tidak ditemukan" 
 }
 ```
 
@@ -93,7 +82,7 @@ Response Body Error :
 
 ```json
 {
-  "errors" : "Jadwal Bentrok"
+  "error" : "Jadwal Bentrok"
 }
 ```
 
@@ -140,7 +129,7 @@ Response Body Error :
 
 ```json
 {
-  "errors" : "Jadwal Bentrok"
+  "error" : "Jadwal Bentrok"
 }
 ```
 
@@ -163,7 +152,7 @@ Response Body Error :
 
 ```json
 {
-  "errors" : "Jadwal tidak ditemukan"
+  "error" : "Jadwal tidak ditemukan"
 }
 ```
 
@@ -202,6 +191,6 @@ Response Body Error :
 
 ```json
 {
-  "errors" : "Jadwal tidak ditemukan" 
+  "error" : "Jadwal tidak ditemukan" 
 }
 ```

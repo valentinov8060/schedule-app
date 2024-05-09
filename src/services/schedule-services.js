@@ -7,7 +7,6 @@ import {
   idMatkulPathValidationSchema,
   createScheduleValidationSchema,
   updateScheduleValidationSchema,
-  listScheduleValidationSchema,
   getUserScheduleValidationSchema
 } from "../validation/schedule-validation.js";
 import { ResponseError } from "../error/error.js";
@@ -29,6 +28,17 @@ const createSchedule = async (headerAuthorization, reqBody) => {
   // check request body
   const reqBodyValidation = validation(createScheduleValidationSchema, reqBody)
 
+  // check jam
+  function checkJam (jam_mulai, jam_selesai) {
+    jam_mulai = parseFloat(jam_mulai);
+    jam_selesai = parseFloat(jam_selesai);
+  
+    if (jam_mulai > jam_selesai) {
+      throw new ResponseError (401, 'Jam selesai harus lebih besar dari jam mulai')
+    } 
+  }
+  checkJam(reqBodyValidation.jam_mulai, reqBodyValidation.jam_selesai)
+
   // check kelas 
   const queryCheckNamaKelas = `
     SELECT COUNT(*) AS count 
@@ -41,6 +51,7 @@ const createSchedule = async (headerAuthorization, reqBody) => {
   if (checkKelas > 0) {
     throw new ResponseError (401, 'Kelas sudah ada')
   }
+
 
   // create data
   const id_mata_kuliah = uuidv4();
@@ -113,6 +124,17 @@ const updateSchedule = async (headerAuthorization, reqBody, pathIdMatkul) => {
     .catch(error => {
       throw new ResponseError (401, 'Error, Bukan Mata Kuliah Anda: ' + error.message)
     })
+
+  // check jam
+  function checkJam (jam_mulai, jam_selesai) {
+    jam_mulai = parseFloat(jam_mulai);
+    jam_selesai = parseFloat(jam_selesai);
+  
+    if (jam_mulai > jam_selesai) {
+      throw new ResponseError (401, 'Jam selesai harus lebih besar dari jam mulai')
+    } 
+  }
+  checkJam(reqBodyValidation.jam_mulai, reqBodyValidation.jam_selesai)
 
   // check kelas
   const queryCheckNamaKelas = `
@@ -217,12 +239,6 @@ const removeSchedule = async (headerAuthorization, pathIdMatkul) => {
 }
 
 const listSchedule = async (path) => {
-  // check query path
-  const pathValidation = validation(listScheduleValidationSchema, path)
-
-  // create resorse
-  const {page, size} = pathValidation
-
   // get data
   const queryGetSchedule = `
     SELECT mata_kuliah, nama_kelas, sks, hari, jam_mulai, jam_selesai, ruangan 
@@ -248,29 +264,8 @@ const listSchedule = async (path) => {
 
     return 0;
   }
-  sechedules.sort(sortSchedules)
 
-  // paging data
-  function paginateArray(data, page, size) {
-    const startIndex = (page - 1) * size;
-    const endIndex = startIndex + size;
-
-    return data.slice(startIndex, endIndex);
-  }
-
-  // create response
-  const data = paginateArray(sechedules, page, size)
-  const total_page = Math.ceil(sechedules.length / size)
-  const total_data = sechedules.length
-
-  return {
-    schedules: data,
-    paging : {
-      page,
-      total_page,
-      total_data
-    }
-  }
+  return sechedules.sort(sortSchedules)
 }
 
 const getUserSchedule = async (pathUser) => {
