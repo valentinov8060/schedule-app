@@ -2,10 +2,9 @@
 
 ## 1. Login User API
 
-Endpoint : POST /user/login
+Public endpoint : POST /user/login
 
 Request Body :
-
 ```json
 {
   "user" : "2115061073",
@@ -14,7 +13,6 @@ Request Body :
 ```
 
 Response Body Success : 
-
 ```json
 {
   "data" : {
@@ -24,31 +22,27 @@ Response Body Success :
 ```
 
 Response Body Error :
-
 ```json
 {
   "error" : "User atau password salah"
 }
 ```
 
+## 2. Token User API
 
-## 2. Logout User API
-
-Endpoint : DELETE /user/logout  
+Private endpoint : GET /user/token
 
 Headers :
 - Authorization : token
 
 Response Body Success : 
-
 ```json
 {
-  "data" : "Logout success"
+  "data" : "Token active"
 }
 ```
 
-Response Body Error : 
-
+Response Body Error :
 ```json
 {
   "error" : "Unauthorized"

@@ -8,7 +8,7 @@ import {
 
 const create = async (req, res, next) => {
   try {
-    const view = await createSchedule(req.token, req.body)
+    const view = await createSchedule(req.auth, req.body)
     res.status(200).json({
       data: view
     })
@@ -19,7 +19,7 @@ const create = async (req, res, next) => {
 
 const update = async (req, res, next) => {
   try {
-    const view = await updateSchedule(req.token, req.body, req.params.id_mata_kuliah)
+    const view = await updateSchedule(req.auth, req.body, req.params.id_mata_kuliah)
     res.status(200).json({
       data: view
     })
@@ -30,7 +30,7 @@ const update = async (req, res, next) => {
 
 const remove = async (req, res, next) => {
   try {
-    await removeSchedule(req.token, req.params.id_mata_kuliah)
+    await removeSchedule(req.auth, req.params.id_mata_kuliah)
     res.status(200).json({
       data: "Mata Kuliah Berhasil Dihapus"
     })

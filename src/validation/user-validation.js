@@ -5,9 +5,6 @@ const loginUserValidationSchema = Joi.object({
   password: Joi.string().max(255).required()
 });
 
-const authorizationValidationSchema = Joi.string().min(36).max(36).required()
-
 export { 
   loginUserValidationSchema,
-  authorizationValidationSchema
 }

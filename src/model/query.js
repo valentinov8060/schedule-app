@@ -1,6 +1,4 @@
-import { connection } from "./connection.js";
-
-function executeQuery(query) {
+function executeQuery(connection, query) {
   return new Promise((resolve, reject) => {
     connection.query(query, (err, result) => {
       if (err) {
@@ -11,7 +9,7 @@ function executeQuery(query) {
   });
 }
 
-function executeParameterizedQuery(query, values) {
+function executeParameterizedQuery(connection, query, values) {
   return new Promise((resolve, reject) => {
     connection.query(query, values, (err, result) => {
       if (err) {
@@ -29,56 +27,16 @@ export {
 
 
 
-/* import bycrypt from 'bcrypt'
-const user = "2115061077"
-let password = "2115061077"
-password = bycrypt.hashSync(password, 10) */
-
 // add user
-/* connection.query(`INSERT INTO \`schedule-app\`.\`users\` (user, password) VALUES ('${user}', '${password}')`, (err) => {
-  if (err) {
-    console.error('Error inserting user:', err.message);
-    return;
-  }
-})
-connection.end() */
+/* import bycrypt from 'bcrypt'
+import mysql from 'mysql'
 
-// example how to use fetchData function
-/* async function main () {
-  const queryGetSchedule = `SELECT mata_kuliah, nama_kelas, sks, hari, jam_mulai, jam_selesai, ruangan FROM \`schedule-app\`.\`schedules\`;`
-  const sechedules = await getResult(queryGetSchedule)
-    .then(result => result)
-    .catch(error => {
-      console.error('Error getting schedule: ', error.message);
-    })
+const user = "2115061071"
+let password = "2115061071"
+password = bycrypt.hashSync(password, 10)
 
-  function getDayOrder(dayName) {
-    const daysOfWeek = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-    return daysOfWeek.indexOf(dayName);
-  }
-
-  function sortSchedules(a, b) {
-
-    if (getDayOrder(a.hari) > getDayOrder(b.hari)) return 1;
-    if (getDayOrder(a.hari) < getDayOrder(b.hari)) return -1;
-  
-
-    if (a.jam_mulai > b.jam_mulai) return 1;
-    if (a.jam_mulai < b.jam_mulai) return -1;
-  
-    return 0;
-  }
-  sechedules.sort(sortSchedules)
-
-  function paginateArray(data, page, size) {
-    const startIndex = (page - 1) * size;
-    const endIndex = startIndex + size;
-
-    const paginatedData = data.slice(startIndex, endIndex);
-  
-    return paginatedData;
-  }
-  
-  console.log(paginateArray(sechedules, 2, 2))
-}  */
-/* main() */
+var connection = mysql.createConnection('mysql://root@localhost:3306/schedule-app');
+executeQuery(connection, `INSERT INTO \`users\` (user, password) VALUES ('${user}', '${password}')`)
+  .then(result => console.log(result))
+connection.end()
+ */

@@ -1,6 +1,5 @@
 import {
   loginUser,
-  logoutUser
 } from "../services/user-services.js";
 
 const login = async (req, res, next) => {
@@ -14,18 +13,13 @@ const login = async (req, res, next) => {
   }
 }
 
-const logout = async (req, res, next) => {
-  try {
-    await logoutUser(req.token)
-    res.status(200).json({
-      data: "Logout success"
-    })
-  } catch (error) {
-    next(error)
-  }
-} 
+const token = async (req, res, next) => {
+  res.status(200).json({
+    data: `Token user ${req.auth} is authorized`
+  })
+}
 
 export default {
   login,
-  logout
+  token
 }

@@ -1,57 +1,37 @@
 import { v4 as uuidv4 } from 'uuid';
+import mysql from 'mysql';
 
 import { executeQuery, executeParameterizedQuery } from "../model/query.js";
 import { validation } from "../validation/validation.js";
 import {
-  authorizationValidationSchema,
-  idMatkulPathValidationSchema,
   createScheduleValidationSchema,
   updateScheduleValidationSchema,
-  getUserScheduleValidationSchema
+  removeScheduleValidationSchema,
+  getUserScheduleValidationSchema,
+  clockValidation
 } from "../validation/schedule-validation.js";
 import { ResponseError } from "../error/error.js";
 
-const createSchedule = async (headerAuthorization, reqBody) => {
-  // check authorization token
-  const authorizationValidation = validation(authorizationValidationSchema, headerAuthorization)
-  // check user from authorization token
-  const queryGetUser = `
-    SELECT user FROM \`schedule-app\`.\`users\` 
-    WHERE token = ?
-  `
-  const valuesGetUser = [authorizationValidation]
-  const user = await executeParameterizedQuery(queryGetUser, valuesGetUser)
-    .then(result => result[0].user)
-    .catch(error => {
-      throw new ResponseError (401, 'Error, user not found: ' + error.message)
-    })
+const createSchedule = async (user, reqBody) => {
+  // create connection
+  const connection = mysql.createConnection('mysql://root@localhost:3306/schedule-app');
+
   // check request body
   const reqBodyValidation = validation(createScheduleValidationSchema, reqBody)
-
-  // check jam
-  function checkJam (jam_mulai, jam_selesai) {
-    jam_mulai = parseFloat(jam_mulai);
-    jam_selesai = parseFloat(jam_selesai);
-  
-    if (jam_mulai > jam_selesai) {
-      throw new ResponseError (401, 'Jam selesai harus lebih besar dari jam mulai')
-    } 
-  }
-  checkJam(reqBodyValidation.jam_mulai, reqBodyValidation.jam_selesai)
-
+  // check jam mulai jam selesai
+  clockValidation(reqBodyValidation.jam_mulai, reqBodyValidation.jam_selesai)
   // check kelas 
   const queryCheckNamaKelas = `
     SELECT COUNT(*) AS count 
-    FROM \`schedule-app\`.\`schedules\` 
+    FROM \`schedules\` 
     WHERE nama_kelas = ?
   `
   const valuesCheckNamaKelas = [reqBodyValidation.nama_kelas]
-  const checkKelas = await executeParameterizedQuery(queryCheckNamaKelas, valuesCheckNamaKelas)
+  const checkKelas = await executeParameterizedQuery(connection, queryCheckNamaKelas, valuesCheckNamaKelas)
     .then(result => result[0].count)
   if (checkKelas > 0) {
     throw new ResponseError (401, 'Kelas sudah ada')
   }
-
 
   // create data
   const id_mata_kuliah = uuidv4();
@@ -59,12 +39,12 @@ const createSchedule = async (headerAuthorization, reqBody) => {
 
   // insert data
   const queryAddShechedule = `
-    INSERT INTO \`schedule-app\`.\`schedules\` 
+    INSERT INTO \`schedules\` 
     (id_mata_kuliah, mata_kuliah, nama_kelas, sks, hari, jam_mulai, jam_selesai, ruangan, user)
     SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?
     WHERE NOT EXISTS (
       SELECT 1
-      FROM \`schedule-app\`.\`schedules\`
+      FROM \`schedules\`
       WHERE hari = ? 
         AND (
           (? BETWEEN jam_mulai AND jam_selesai)
@@ -75,7 +55,7 @@ const createSchedule = async (headerAuthorization, reqBody) => {
     );
   `
   const valuesAddShechedule = [id_mata_kuliah, mata_kuliah, nama_kelas, sks, hari, jam_mulai, jam_selesai, ruangan, user, hari, jam_mulai, jam_selesai, jam_mulai, jam_selesai, ruangan]
-  const checkSchedule = await executeParameterizedQuery(queryAddShechedule, valuesAddShechedule)
+  const checkSchedule = await executeParameterizedQuery(connection, queryAddShechedule, valuesAddShechedule)
     .then(result => result.affectedRows)
   if (checkSchedule === 0) {
     throw new ResponseError (401, 'Jadwal Bentrok')
@@ -83,66 +63,50 @@ const createSchedule = async (headerAuthorization, reqBody) => {
 
   // create response
   const queryGetSchedule = `
-    SELECT * FROM \`schedule-app\`.\`schedules\` 
+    SELECT * FROM \`schedules\` 
     WHERE id_mata_kuliah = ?
   `
   const valuesGetSchedule = [id_mata_kuliah]
-  const response = await executeParameterizedQuery(queryGetSchedule, valuesGetSchedule)
+  const response = await executeParameterizedQuery(connection, queryGetSchedule, valuesGetSchedule)
     .then(result => result[0])
     .catch(error => {
       throw new ResponseError (501, 'Error getting schedule:' + error.message)
     })
+
+  connection.end()
   return response
 }
 
-const updateSchedule = async (headerAuthorization, reqBody, pathIdMatkul) => {
-  // check authorization token
-  const authorizationValidation = validation(authorizationValidationSchema, headerAuthorization)
-  // check user from authorization token
-  const queryGetUser = `
-    SELECT user FROM \`schedule-app\`.\`users\` 
-    WHERE token = ?
-  `
-  const valuesGetUser = [authorizationValidation]
-  const user = await executeParameterizedQuery(queryGetUser, valuesGetUser)
-    .then(result => result[0].user)
-    .catch(error => {
-      throw new ResponseError (401, 'Error, user not found: ' + error.message)
-    })
+const updateSchedule = async (user, reqBody, pathIdMatkul) => {
+  // create connection
+  const connection = mysql.createConnection('mysql://root@localhost:3306/schedule-app');
+
   // check request body
   const reqBodyValidation = validation(updateScheduleValidationSchema, reqBody)
   // check query path id_mata_kuliah
-  const idMatkulValidation = validation(idMatkulPathValidationSchema, pathIdMatkul)
+  const idMatkulValidation = validation(removeScheduleValidationSchema, pathIdMatkul)
   // check id_mata_kuliah from query path
   const queryCheckPathIdMatkul = `
-    SELECT id_mata_kuliah, user FROM \`schedule-app\`.\`schedules\` 
+    SELECT id_mata_kuliah, user FROM \`schedules\` 
     WHERE id_mata_kuliah = ? AND user = ?
   `
   const valuesCheckPathIdMatkul = [idMatkulValidation, user]
-  const IdMatkul = await executeParameterizedQuery(queryCheckPathIdMatkul, valuesCheckPathIdMatkul)
+  const IdMatkul = await executeParameterizedQuery(connection, queryCheckPathIdMatkul, valuesCheckPathIdMatkul)
     .then(result => result[0].id_mata_kuliah)
     .catch(error => {
       throw new ResponseError (401, 'Error, Bukan Mata Kuliah Anda: ' + error.message)
     })
 
-  // check jam
-  function checkJam (jam_mulai, jam_selesai) {
-    jam_mulai = parseFloat(jam_mulai);
-    jam_selesai = parseFloat(jam_selesai);
-  
-    if (jam_mulai > jam_selesai) {
-      throw new ResponseError (401, 'Jam selesai harus lebih besar dari jam mulai')
-    } 
-  }
-  checkJam(reqBodyValidation.jam_mulai, reqBodyValidation.jam_selesai)
+  // check jam mulai jam selesai
+  clockValidation(reqBodyValidation.jam_mulai, reqBodyValidation.jam_selesai)
 
   // check kelas
   const queryCheckNamaKelas = `
-    SELECT COUNT(*) AS count FROM \`schedule-app\`.\`schedules\` 
+    SELECT COUNT(*) AS count FROM \`schedules\` 
     WHERE nama_kelas = ?
   `
   const valuesCheckNamaKelas = [reqBodyValidation.nama_kelas]
-  const checkKelas = await executeParameterizedQuery(queryCheckNamaKelas, valuesCheckNamaKelas)
+  const checkKelas = await executeParameterizedQuery(connection, queryCheckNamaKelas, valuesCheckNamaKelas)
     .then(result => result[0].count)
   if (checkKelas > 1) {
     throw new ResponseError (401, 'Kelas sudah ada')
@@ -153,12 +117,12 @@ const updateSchedule = async (headerAuthorization, reqBody, pathIdMatkul) => {
 
   // insert data
   const queryUpdateSchedule = `
-    UPDATE \`schedule-app\`.\`schedules\`
+    UPDATE \`schedules\`
     SET mata_kuliah = ?, nama_kelas = ?, sks = ?, hari = ?, jam_mulai = ?, jam_selesai = ?, ruangan = ?, user = ?
     WHERE id_mata_kuliah = ?
       AND NOT EXISTS (
         SELECT 1
-        FROM \`schedule-app\`.\`schedules\`
+        FROM \`schedules\`
         WHERE hari = ? 
           AND (
             (? BETWEEN jam_mulai AND jam_selesai)
@@ -185,7 +149,7 @@ const updateSchedule = async (headerAuthorization, reqBody, pathIdMatkul) => {
     jam_mulai,
     ruangan
   ]
-  const checkSchedule = await executeParameterizedQuery(queryUpdateSchedule, valuesUpdateSchedule)
+  const checkSchedule = await executeParameterizedQuery(connection, queryUpdateSchedule, valuesUpdateSchedule)
     .then(result => result.affectedRows)
   if (checkSchedule === 0) {
     throw new ResponseError (401, 'Jadwal Bentrok')
@@ -193,58 +157,65 @@ const updateSchedule = async (headerAuthorization, reqBody, pathIdMatkul) => {
 
   // create response
   const queryGetSchedule = `
-    SELECT * FROM \`schedule-app\`.\`schedules\` 
+    SELECT * FROM \`schedules\` 
     WHERE id_mata_kuliah = ?
   `
   const valuesGetSchedule = [IdMatkul]
-  const response = await executeParameterizedQuery(queryGetSchedule, valuesGetSchedule)
+  const response = await executeParameterizedQuery(connection, queryGetSchedule, valuesGetSchedule)
     .then(result => result[0])
     .catch(error => {
       throw new ResponseError (501, 'Error getting schedule: ' + error.message)
     })
 
+  connection.end()
   return response
 }
 
-const removeSchedule = async (headerAuthorization, pathIdMatkul) => {
-  // check authorization token
-  const authorizationValidation = validation(authorizationValidationSchema, headerAuthorization)
-  // check user from authorization token
+const removeSchedule = async (user, pathIdMatkul) => {
+  // create connection
+  const connection = mysql.createConnection('mysql://root@localhost:3306/schedule-app');
+
+  // check user
   const queryCheckUser = `
-    SELECT user FROM \`schedule-app\`.\`users\` 
-    WHERE token = ?
+    SELECT user FROM \`users\` 
+    WHERE user = ?
   `
-  const valuesCheckUser = [authorizationValidation]
-  await executeParameterizedQuery(queryCheckUser, valuesCheckUser)
+  const valuesCheckUser = [user]
+  await executeParameterizedQuery(connection, queryCheckUser, valuesCheckUser)
     .then(result => result[0].user)
     .catch(error => {
       throw new ResponseError (401, 'Error, user not found: ' + error.message) 
     })
   // check query path id_mata_kuliah
-  const idMatkulValidation = validation(idMatkulPathValidationSchema, pathIdMatkul)
+  const idMatkulValidation = validation(removeScheduleValidationSchema, pathIdMatkul)
   // check id_mata_kuliah from query path
   const queryCheckPathIdMatkul = `
-    SELECT id_mata_kuliah FROM \`schedule-app\`.\`schedules\` 
+    SELECT id_mata_kuliah FROM \`schedules\` 
     WHERE id_mata_kuliah = ?
   `
   const valuesCheckPathIdMatkul = [idMatkulValidation]
-  const IdMatkul = await executeParameterizedQuery(queryCheckPathIdMatkul, valuesCheckPathIdMatkul)
+  const IdMatkul = await executeParameterizedQuery(connection, queryCheckPathIdMatkul, valuesCheckPathIdMatkul)
     .then(result => result[0].id_mata_kuliah)
     .catch(error => {
       throw new ResponseError (401, 'Error, id_matkul not found: ' + error.message) 
     })
 
   // remove data
-  await executeParameterizedQuery(`DELETE FROM \`schedule-app\`.\`schedules\` WHERE id_mata_kuliah = ?`, [IdMatkul])
+  await executeParameterizedQuery(`DELETE FROM \`schedules\` WHERE id_mata_kuliah = ?`, [IdMatkul])
+
+  connection.end()
 }
 
-const listSchedule = async (path) => {
+const listSchedule = async () => {
+  // create connection
+  const connection = mysql.createConnection('mysql://root@localhost:3306/schedule-app');
+
   // get data
   const queryGetSchedule = `
     SELECT mata_kuliah, nama_kelas, sks, hari, jam_mulai, jam_selesai, ruangan 
-    FROM \`schedule-app\`.\`schedules\`
+    FROM \`schedules\`
   `
-  const sechedules = await executeQuery(queryGetSchedule)
+  const sechedules = await executeQuery(connection, queryGetSchedule)
     .then(result => result)
     .catch(error => {
       throw new ResponseError (501, 'Error getting schedule: ' + error.message)
@@ -265,19 +236,23 @@ const listSchedule = async (path) => {
     return 0;
   }
 
+  connection.end()
   return sechedules.sort(sortSchedules)
 }
 
 const getUserSchedule = async (pathUser) => {
+  // create connection
+  const connection = mysql.createConnection('mysql://root@localhost:3306/schedule-app');
+
   // check query path
   const userValidation = validation(getUserScheduleValidationSchema, pathUser)
   // check user from table
   const queryCheckUser = `
-    SELECT user FROM \`schedule-app\`.\`users\` 
+    SELECT user FROM \`users\` 
     WHERE user = ?
   `
   const valuesCheckUser = [userValidation]
-  await executeParameterizedQuery(queryCheckUser, valuesCheckUser)
+  const user = await executeParameterizedQuery(connection, queryCheckUser, valuesCheckUser)
     .then(result => result[0].user)
     .catch(error => {
       throw new ResponseError (401, 'Error, user not found: ' + error.message) 
@@ -285,11 +260,11 @@ const getUserSchedule = async (pathUser) => {
 
   // get data
   const queryGetUserSchedule = `
-    SELECT mata_kuliah, nama_kelas, sks, hari, jam_mulai, jam_selesai, ruangan FROM \`schedule-app\`.\`schedules\` 
-    WHERE user = '${userValidation}'
+    SELECT mata_kuliah, nama_kelas, sks, hari, jam_mulai, jam_selesai, ruangan FROM \`schedules\` 
+    WHERE user = ?
   `
-  const valuesGetUserSchedule = [userValidation]
-  const sechedules = await executeParameterizedQuery(queryGetUserSchedule, valuesGetUserSchedule)
+  const valuesGetUserSchedule = [user]
+  const sechedules = await executeParameterizedQuery(connection, queryGetUserSchedule, valuesGetUserSchedule)
     .then(result => result)
     .catch(error => {
       throw new ResponseError (501, 'Error getting schedule: ' + error.message)
@@ -311,6 +286,7 @@ const getUserSchedule = async (pathUser) => {
   }
   sechedules.sort(sortSchedules)
 
+  connection.end()
   return sechedules
 }
 

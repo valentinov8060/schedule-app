@@ -1,53 +1,13 @@
 # Schedule API Spec
 
-## 1. List Schedule 
+## 1. Create Schedule API
 
-Endpoint : GET /schedule/list
-
-Response Body Success :
-
-```json
-{
-  "data" : [
-    {
-      "mata_kuliah" : "METODOLOGI PENELITIAN	",
-      "nama_kelas" : "MP-A",
-      "sks" : "2",
-      "hari" : "selasa",
-      "jam_mulai" : "080000",
-      "jam_selesai" : "090000",
-      "ruangan" : "H18"
-    },
-    {
-      "mata_kuliah" : "METODOLOGI PENELITIAN	",
-      "nama_kelas" : "MP-A",
-      "sks" : "2",
-      "hari" : "selasa",
-      "jam_mulai" : "080000",
-      "jam_selesai" : "090000",
-      "ruangan" : "H18"
-    }
-  ]
-}
-```
-
-Response Body Error :
-
-```json
-{
-  "error" : "Jadwal tidak ditemukan" 
-}
-```
-
-## 2. Create Schedule API
-
-Endpoint : POST /schedule/create
+Private endpoint : POST /schedule/create
 
 Headers : 
 - Authorization : token
 
 Request Body :
-
 ```json
 {
   "mata_kuliah" : "METODOLOGI PENELITIAN",
@@ -61,7 +21,6 @@ Request Body :
 ```
 
 Response Body Success : 
-
 ```json
 {
   "data" : {
@@ -79,22 +38,20 @@ Response Body Success :
 ```
 
 Response Body Error :
-
 ```json
 {
   "error" : "Jadwal Bentrok"
 }
 ```
 
-## 3. Update Schedule API
+## 2. Update Schedule API
 
-Endpoint : PUT /schedule/update/:id_mata_kuliah
+Private endpoint : PUT /schedule/update/:id_mata_kuliah
 
 Headers :
 - Authorization : token
 
 Request Body :
-
 ```json
 {
   "mata_kuliah" : "METODOLOGI PENELITIAN	",
@@ -108,7 +65,6 @@ Request Body :
 ```
 
 Response Body Success :
-
 ```json
 {
   "data" : {
@@ -126,22 +82,20 @@ Response Body Success :
 ```
 
 Response Body Error :
-
 ```json
 {
   "error" : "Jadwal Bentrok"
 }
 ```
 
-## 4. Remove Schedule API
+## 3. Remove Schedule API
 
-Endpoint : DELETE /schedule/remove/:id_mata_kuliah
+Private endpoint : DELETE /schedule/remove/:id_mata_kuliah
 
 Headers :
 - Authorization : token
 
 Response Body Success :
-
 ```json
 {
   "data" : "OK"
@@ -149,24 +103,22 @@ Response Body Success :
 ```
 
 Response Body Error :
-
 ```json
 {
   "error" : "Jadwal tidak ditemukan"
 }
 ```
 
-## 5. Get User Schedule
+## 4. List Schedule API
 
-Endpoint : GET /schedule/user/:user
+Public endpoint : GET /schedule/list
 
 Response Body Success :
-
 ```json
 {
   "data" : [
     {
-      "mata_kuliah" : "METODOLOGI PENELITIAN	",
+      "mata_kuliah" : "METODOLOGI PENELITIAN",
       "nama_kelas" : "MP-A",
       "sks" : "2",
       "hari" : "selasa",
@@ -175,7 +127,7 @@ Response Body Success :
       "ruangan" : "H18"
     },
     {
-      "mata_kuliah" : "METODOLOGI PENELITIAN	",
+      "mata_kuliah" : "METODOLOGI PENELITIAN",
       "nama_kelas" : "MP-A",
       "sks" : "2",
       "hari" : "selasa",
@@ -188,7 +140,43 @@ Response Body Success :
 ```
 
 Response Body Error :
+```json
+{
+  "error" : "Jadwal tidak ditemukan" 
+}
+```
 
+## 5. Get User Schedule API
+
+Public endpoint : GET /schedule/user/:user
+
+Response Body Success :
+```json
+{
+  "data" : [
+    {
+      "mata_kuliah" : "METODOLOGI PENELITIAN",
+      "nama_kelas" : "MP-A",
+      "sks" : "2",
+      "hari" : "selasa",
+      "jam_mulai" : "080000",
+      "jam_selesai" : "090000",
+      "ruangan" : "H18"
+    },
+    {
+      "mata_kuliah" : "METODOLOGI PENELITIAN",
+      "nama_kelas" : "MP-A",
+      "sks" : "2",
+      "hari" : "selasa",
+      "jam_mulai" : "080000",
+      "jam_selesai" : "090000",
+      "ruangan" : "H18"
+    }
+  ]
+}
+```
+
+Response Body Error :
 ```json
 {
   "error" : "Jadwal tidak ditemukan" 

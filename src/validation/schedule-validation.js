@@ -1,8 +1,6 @@
 import Joi from "joi";
 
-const authorizationValidationSchema = Joi.string().min(36).max(36).required()
-
-const idMatkulPathValidationSchema = Joi.string().min(36).max(36).required()
+import { ResponseError } from "../error/error.js";
 
 const createScheduleValidationSchema = Joi.object({
   mata_kuliah: Joi.string().max(255).required(),
@@ -24,12 +22,23 @@ const updateScheduleValidationSchema = Joi.object({
   ruangan: Joi.string().max(255).required(),
 })
 
+const removeScheduleValidationSchema = Joi.string().min(36).max(36).required()
+
 const getUserScheduleValidationSchema = Joi.string().max(255).required()
 
+function clockValidation (jam_mulai, jam_selesai) {
+  jam_mulai = parseFloat(jam_mulai);
+  jam_selesai = parseFloat(jam_selesai);
+
+  if (jam_mulai > jam_selesai) {
+    throw new ResponseError (401, 'Jam selesai harus lebih besar dari jam mulai')
+  } 
+}
+
 export {
-  authorizationValidationSchema,
-  idMatkulPathValidationSchema,
   createScheduleValidationSchema,
   updateScheduleValidationSchema,
-  getUserScheduleValidationSchema
+  removeScheduleValidationSchema,
+  getUserScheduleValidationSchema,
+  clockValidation
 }
