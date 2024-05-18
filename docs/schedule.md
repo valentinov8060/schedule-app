@@ -118,22 +118,26 @@ Response Body Success :
 {
   "data" : [
     {
+      "id_mata_kuliah" : "2cd28e07-1e80-468e-ac06-623e94dabf55",
       "mata_kuliah" : "METODOLOGI PENELITIAN",
       "nama_kelas" : "MP-A",
       "sks" : "2",
       "hari" : "selasa",
       "jam_mulai" : "080000",
       "jam_selesai" : "090000",
-      "ruangan" : "H18"
+      "ruangan" : "H18",
+      "user" : "2115061054"
     },
     {
+      "id_mata_kuliah" : "2cd28e07-1e80-468e-ac06-623e94dabf55",
       "mata_kuliah" : "METODOLOGI PENELITIAN",
       "nama_kelas" : "MP-A",
       "sks" : "2",
       "hari" : "selasa",
       "jam_mulai" : "080000",
       "jam_selesai" : "090000",
-      "ruangan" : "H18"
+      "ruangan" : "H18",
+      "user" : "2115061054"
     }
   ]
 }
@@ -155,22 +159,26 @@ Response Body Success :
 {
   "data" : [
     {
+      "id_mata_kuliah" : "2cd28e07-1e80-468e-ac06-623e94dabf55",
       "mata_kuliah" : "METODOLOGI PENELITIAN",
       "nama_kelas" : "MP-A",
       "sks" : "2",
       "hari" : "selasa",
       "jam_mulai" : "080000",
       "jam_selesai" : "090000",
-      "ruangan" : "H18"
+      "ruangan" : "H18",
+      "user" : "2115061054"
     },
     {
+      "id_mata_kuliah" : "2cd28e07-1e80-468e-ac06-623e94dabf55",
       "mata_kuliah" : "METODOLOGI PENELITIAN",
       "nama_kelas" : "MP-A",
       "sks" : "2",
       "hari" : "selasa",
       "jam_mulai" : "080000",
       "jam_selesai" : "090000",
-      "ruangan" : "H18"
+      "ruangan" : "H18",
+      "user" : "2115061054"
     }
   ]
 }

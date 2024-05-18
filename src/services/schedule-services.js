@@ -191,17 +191,17 @@ const removeSchedule = async (user, pathIdMatkul) => {
   // check id_mata_kuliah from query path
   const queryCheckPathIdMatkul = `
     SELECT id_mata_kuliah FROM \`schedules\` 
-    WHERE id_mata_kuliah = ?
+    WHERE id_mata_kuliah = ? AND user = ?
   `
-  const valuesCheckPathIdMatkul = [idMatkulValidation]
-  const IdMatkul = await executeParameterizedQuery(connection, queryCheckPathIdMatkul, valuesCheckPathIdMatkul)
+  const valuesCheckPathIdMatkul = [idMatkulValidation, user]
+  const IdMatkulUser = await executeParameterizedQuery(connection, queryCheckPathIdMatkul, valuesCheckPathIdMatkul)
     .then(result => result[0].id_mata_kuliah)
     .catch(error => {
-      throw new ResponseError (401, 'Error, id_matkul not found: ' + error.message) 
+      throw new ResponseError (401, 'Error, id_matkul not found or not your schedule: ' + error.message) 
     })
 
   // remove data
-  await executeParameterizedQuery(`DELETE FROM \`schedules\` WHERE id_mata_kuliah = ?`, [IdMatkul])
+  await executeParameterizedQuery(connection, `DELETE FROM \`schedules\` WHERE id_mata_kuliah = ?`, [IdMatkulUser])
 
   connection.end()
 }
@@ -212,7 +212,7 @@ const listSchedule = async () => {
 
   // get data
   const queryGetSchedule = `
-    SELECT mata_kuliah, nama_kelas, sks, hari, jam_mulai, jam_selesai, ruangan 
+    SELECT id_mata_kuliah, mata_kuliah, nama_kelas, sks, hari, jam_mulai, jam_selesai, ruangan, user
     FROM \`schedules\`
   `
   const sechedules = await executeQuery(connection, queryGetSchedule)
@@ -260,7 +260,8 @@ const getUserSchedule = async (pathUser) => {
 
   // get data
   const queryGetUserSchedule = `
-    SELECT mata_kuliah, nama_kelas, sks, hari, jam_mulai, jam_selesai, ruangan FROM \`schedules\` 
+    SELECT id_mata_kuliah, mata_kuliah, nama_kelas, sks, hari, jam_mulai, jam_selesai, ruangan, user 
+    FROM \`schedules\` 
     WHERE user = ?
   `
   const valuesGetUserSchedule = [user]
