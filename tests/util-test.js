@@ -1,5 +1,6 @@
 import bycrypt from 'bcrypt'
 import mysql from 'mysql'
+import jwt from 'jsonwebtoken'
 
 import {
   executeQuery,
@@ -21,7 +22,18 @@ const removeUserTest = () => {
   connection.end()
 }
 
+const getTokenUserTest = () => {
+  const user = "test"
+  const password = bycrypt.hashSync("test", 10)
+  const payload = {
+    user : user
+  }
+  const token = jwt.sign(payload, 'valentinov', { expiresIn: '1h' })
+  return token
+}
+
 export {
   createUserTest,
-  removeUserTest
+  removeUserTest,
+  getTokenUserTest
 }
