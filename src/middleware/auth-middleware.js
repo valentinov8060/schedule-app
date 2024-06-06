@@ -12,13 +12,13 @@ const authMiddleware = async (req, res, next) => {
   )
   if(tokenValidationSchema.validate(token).error) {
     res.status(401).json({
-      error: `${tokenValidationSchema.validate(token).error.message}` 
+      error: `${tokenValidationSchema.validate(token).error}` 
     }).end()
   } else {
     const tokenDecoded = jwt.verify(token, 'valentinov', (err, decoded) => (err ? err : decoded)) 
-    if(tokenDecoded.expiredAt) {
+    if(!tokenDecoded.user) {
       res.status(401).json({ 
-        error: `Error: your token expired at ${tokenDecoded.expiredAt}` 
+        error: `${tokenDecoded}` 
       }).end()
     } else {
       const connection = mysql.createConnection('mysql://root@localhost:3306/schedule-app');

@@ -98,7 +98,7 @@ Headers :
 Response Body Success :
 ```json
 {
-  "data" : "OK"
+  "data" : "Mata Kuliah Berhasil Dihapus"
 }
 ```
 

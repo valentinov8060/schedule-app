@@ -24,16 +24,30 @@ const removeUserTest = () => {
 
 const getTokenUserTest = () => {
   const user = "test"
-  const password = bycrypt.hashSync("test", 10)
-  const payload = {
-    user : user
-  }
+  const payload = { user }
   const token = jwt.sign(payload, 'valentinov', { expiresIn: '1h' })
   return token
+}
+
+const removeScheduleTest = () => {
+  var connection = mysql.createConnection('mysql://root@localhost:3306/schedule-app');
+  executeQuery(connection, `DELETE FROM \`schedules\` WHERE user = 'test'`)
+  connection.end()
+}
+
+const getIdScheduleTest = () => {
+  var connection = mysql.createConnection('mysql://root@localhost:3306/schedule-app');
+  const idMataKuliah = executeQuery(connection, `SELECT id_mata_kuliah FROM \`schedules\` WHERE user = 'test'`)
+    .then(result => result[0].id_mata_kuliah)
+  connection.end()
+
+  return idMataKuliah
 }
 
 export {
   createUserTest,
   removeUserTest,
-  getTokenUserTest
+  getTokenUserTest,
+  removeScheduleTest,
+  getIdScheduleTest
 }

@@ -58,7 +58,7 @@ const createSchedule = async (user, reqBody) => {
   const checkSchedule = await executeParameterizedQuery(connection, queryAddShechedule, valuesAddShechedule)
     .then(result => result.affectedRows)
   if (checkSchedule === 0) {
-    throw new ResponseError (401, 'Jadwal Bentrok')
+    throw new ResponseError (401, 'Jadwal bentrok')
   }
 
   // create response
@@ -152,7 +152,7 @@ const updateSchedule = async (user, reqBody, pathIdMatkul) => {
   const checkSchedule = await executeParameterizedQuery(connection, queryUpdateSchedule, valuesUpdateSchedule)
     .then(result => result.affectedRows)
   if (checkSchedule === 0) {
-    throw new ResponseError (401, 'Jadwal Bentrok')
+    throw new ResponseError (401, 'Jadwal bentrok')
   }
 
   // create response
