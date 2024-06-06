@@ -1,7 +1,7 @@
 import { ResponseError } from "../error/error.js";
 
-const validation = (validationSchema, request) => {
-  const result = validationSchema.validate(request, {
+const validation = (validationSchema, requestInput) => {
+  const result = validationSchema.validate(requestInput, {
     abortEarly: false,
     allowUnknown: false
   })

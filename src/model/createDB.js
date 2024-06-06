@@ -1,4 +1,6 @@
 // mysql://USER:PASSWORD@HOST:PORT/DATABASE 
+
+// Run this code if dont have database
 /* import mysql from 'mysql'
 
 const connectionCreateDB = mysql.createConnection({
@@ -48,4 +50,5 @@ connectionCreateDB.query('CREATE DATABASE IF NOT EXISTS `schedule-app`', (err) =
   });
 });
 
-connectionCreateDB.end(); */
+connectionCreateDB.end(); 
+*/

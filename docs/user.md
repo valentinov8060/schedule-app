@@ -38,7 +38,7 @@ Headers :
 Response Body Success : 
 ```json
 {
-  "data" : "Token active"
+  "data" : "Token user 2115061073 is authorized"
 }
 ```
 

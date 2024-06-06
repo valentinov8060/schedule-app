@@ -2,9 +2,9 @@
   "name": "schedule-app",
   "version": "1.0.0",
   "description": "",
-  "main": "src/main.js",
+  "main": "src/server.js",
   "scripts": {
-    "start": "nodemon src/main.js",
+    "start": "nodemon src/server.js",
     "test": "jest"
   },
   "jest": {
@@ -24,6 +24,7 @@
     "uuid": "^9.0.1"
   },
   "devDependencies": {
+    "@babel/core": "^7.24.6",
     "@babel/preset-env": "^7.24.4",
     "babel-cli": "^6.26.0",
     "babel-jest": "^29.7.0",

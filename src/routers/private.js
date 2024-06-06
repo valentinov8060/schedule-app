@@ -8,7 +8,7 @@ const privateRouter = new express.Router();
 
 privateRouter.use(authMiddleware);
 
-privateRouter.get('/user/token', userController.token);
+privateRouter.get('/user/authentication', userController.authentication);
 privateRouter.post('/schedule/create', scheduleController.create);
 privateRouter.put('/schedule/update/:id_mata_kuliah', scheduleController.update);
 privateRouter.delete('/schedule/remove/:id_mata_kuliah', scheduleController.remove);

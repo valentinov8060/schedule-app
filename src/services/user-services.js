@@ -27,12 +27,12 @@ const loginUser = async (reqBody) => {
       return error.message
     });
   if (!getUserPasswordByReqBodyUser) {
-    throw new ResponseError (401, "User invalid")
+    throw new ResponseError (401, "Invalid user")
   }
   // check password from request body
   const checkPassword = await bcrypt.compare(reqBodyValidation.password, getUserPasswordByReqBodyUser.password)
   if (!checkPassword) {
-    throw new ResponseError (401, "Password invalid")
+    throw new ResponseError (401, "Invalid password")
   }
 
   // generate token

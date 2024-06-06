@@ -13,7 +13,7 @@ const login = async (req, res, next) => {
   }
 }
 
-const token = async (req, res, next) => {
+const authentication = async (req, res, next) => {
   res.status(200).json({
     data: `Token user ${req.auth} is authorized`
   })
@@ -21,5 +21,5 @@ const token = async (req, res, next) => {
 
 export default {
   login,
-  token
+  authentication
 }

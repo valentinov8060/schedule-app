@@ -39,4 +39,4 @@ var connection = mysql.createConnection('mysql://root@localhost:3306/schedule-ap
 executeQuery(connection, `INSERT INTO \`users\` (user, password) VALUES ('${user}', '${password}')`)
   .then(result => console.log(result))
 connection.end()
- */
+*/
