@@ -1,12 +1,13 @@
 // mysql://USER:PASSWORD@HOST:PORT/DATABASE 
 
 // Run this code if dont have database
-/* import mysql from 'mysql'
+/* import mysql from 'mysql';
 
 const connectionCreateDB = mysql.createConnection({
-  host: 'localhost',
+  host: 'localhost', // atau IP address dari MySQL server Anda
   user: 'root',
-  port: 3306
+  port: 3306,
+  password: '' // tambahkan password jika ada
 });
 
 const createTableUserQuery = `
@@ -14,7 +15,8 @@ const createTableUserQuery = `
     user VARCHAR(255) PRIMARY KEY,
     password VARCHAR(255) NOT NULL
   )
-`
+`;
+
 const createTableScheduleQuery = `
   CREATE TABLE IF NOT EXISTS \`schedule-app\`.\`schedules\` (
     id_mata_kuliah VARCHAR(36) PRIMARY KEY,
@@ -28,27 +30,49 @@ const createTableScheduleQuery = `
     user VARCHAR(255),
     FOREIGN KEY (user) REFERENCES users(user)
   )
-`
+`;
 
-connectionCreateDB.query('CREATE DATABASE IF NOT EXISTS `schedule-app`', (err) => {
+connectionCreateDB.connect((err) => {
   if (err) {
-    console.error('Error creating schedule-app database:', err.message);
+    console.error('Error connecting to MySQL:', err.message);
     return;
   }
-  connectionCreateDB.query(createTableUserQuery, (err) => {
+  console.log('Connected to MySQL');
+
+  connectionCreateDB.query('CREATE DATABASE IF NOT EXISTS `schedule-app`', (err) => {
     if (err) {
-      console.error('Error creating user table:', err.message);
+      console.error('Error creating schedule-app database:', err.message);
+      connectionCreateDB.end();
       return;
     }
-    connectionCreateDB.query(createTableScheduleQuery, (err) => {
+    console.log('Database schedule-app created or already exists');
+
+    connectionCreateDB.query('USE `schedule-app`', (err) => {
       if (err) {
-        console.error('Error creating schedule table:', err.message);
+        console.error('Error using schedule-app database:', err.message);
+        connectionCreateDB.end();
         return;
       }
-      console.log('Database and tables has been created successfully');
+      console.log('Using schedule-app database');
+
+      connectionCreateDB.query(createTableUserQuery, (err) => {
+        if (err) {
+          console.error('Error creating users table:', err.message);
+          connectionCreateDB.end();
+          return;
+        }
+        console.log('Users table created or already exists');
+
+        connectionCreateDB.query(createTableScheduleQuery, (err) => {
+          if (err) {
+            console.error('Error creating schedules table:', err.message);
+            connectionCreateDB.end();
+            return;
+          }
+          console.log('Schedules table created or already exists');
+          connectionCreateDB.end();
+        });
+      });
     });
   });
-});
-
-connectionCreateDB.end(); 
-*/
+}); */

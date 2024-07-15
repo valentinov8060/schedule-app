@@ -15,7 +15,7 @@ const authMiddleware = async (req, res, next) => {
       error: `${tokenValidationSchema.validate(token).error}` 
     }).end()
   } else {
-    const tokenDecoded = jwt.verify(token, 'valentinov', (err, decoded) => (err ? err : decoded)) 
+    const tokenDecoded = jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => (err ? err : decoded)) 
     if(!tokenDecoded.user) {
       res.status(401).json({ 
         error: `${tokenDecoded}` 

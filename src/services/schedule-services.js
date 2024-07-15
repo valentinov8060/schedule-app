@@ -79,59 +79,61 @@ const createSchedule = async (user, reqBody) => {
 
 const updateSchedule = async (user, reqBody, pathIdMatkul) => {
   // create connection
-  const connection = mysql.createConnection('mysql://root@localhost:3306/schedule-app');
+  const connection = await mysql.createConnection('mysql://root@localhost:3306/schedule-app');
 
   // check request body
-  const reqBodyValidation = validation(updateScheduleValidationSchema, reqBody)
+  const reqBodyValidation = validation(updateScheduleValidationSchema, reqBody);
   // check query path id_mata_kuliah
-  const idMatkulValidation = validation(removeScheduleValidationSchema, pathIdMatkul)
+  const idMatkulValidation = validation(removeScheduleValidationSchema, pathIdMatkul);
   // check id_mata_kuliah from query path
   const queryCheckPathIdMatkul = `
-    SELECT id_mata_kuliah, user FROM \`schedules\` 
+    SELECT id_mata_kuliah, user FROM schedules 
     WHERE id_mata_kuliah = ? AND user = ?
-  `
-  const valuesCheckPathIdMatkul = [idMatkulValidation, user]
+  `;
+  const valuesCheckPathIdMatkul = [idMatkulValidation, user];
   const IdMatkul = await executeParameterizedQuery(connection, queryCheckPathIdMatkul, valuesCheckPathIdMatkul)
     .then(result => result[0].id_mata_kuliah)
     .catch(error => {
-      throw new ResponseError (401, 'Error, Bukan Mata Kuliah Anda: ' + error.message)
-    })
+      throw new ResponseError(401, 'Error, Bukan Mata Kuliah Anda: ' + error.message);
+    });
 
   // check jam mulai jam selesai
-  clockValidation(reqBodyValidation.jam_mulai, reqBodyValidation.jam_selesai)
+  clockValidation(reqBodyValidation.jam_mulai, reqBodyValidation.jam_selesai);
 
   // check kelas
   const queryCheckNamaKelas = `
-    SELECT COUNT(*) AS count FROM \`schedules\` 
+    SELECT COUNT(*) AS count FROM schedules 
     WHERE nama_kelas = ?
-  `
-  const valuesCheckNamaKelas = [reqBodyValidation.nama_kelas]
+  `;
+  const valuesCheckNamaKelas = [reqBodyValidation.nama_kelas];
   const checkKelas = await executeParameterizedQuery(connection, queryCheckNamaKelas, valuesCheckNamaKelas)
-    .then(result => result[0].count)
+    .then(result => result[0].count);
   if (checkKelas > 1) {
-    throw new ResponseError (401, 'Kelas sudah ada')
+    throw new ResponseError(401, 'Kelas sudah ada');
   }
 
   // create data
-  const {mata_kuliah, nama_kelas, sks, hari, jam_mulai, jam_selesai, ruangan} = reqBodyValidation
+  const { mata_kuliah, nama_kelas, sks, hari, jam_mulai, jam_selesai, ruangan } = reqBodyValidation;
 
   // insert data
   const queryUpdateSchedule = `
-    UPDATE \`schedules\`
+    UPDATE schedules
     SET mata_kuliah = ?, nama_kelas = ?, sks = ?, hari = ?, jam_mulai = ?, jam_selesai = ?, ruangan = ?, user = ?
     WHERE id_mata_kuliah = ?
       AND NOT EXISTS (
         SELECT 1
-        FROM \`schedules\`
-        WHERE hari = ? 
-          AND (
-            (? BETWEEN jam_mulai AND jam_selesai)
-            OR (? BETWEEN jam_mulai AND jam_selesai)
-            OR (? < jam_mulai AND ? > jam_selesai)
-          )
-          AND ruangan = ?
+        FROM (
+          SELECT 1 FROM schedules
+          WHERE hari = ? 
+            AND (
+              (? BETWEEN jam_mulai AND jam_selesai)
+              OR (? BETWEEN jam_mulai AND jam_selesai)
+              OR (? < jam_mulai AND ? > jam_selesai)
+            )
+            AND ruangan = ?
+        ) AS temp
       );
-  `
+  `;
   const valuesUpdateSchedule = [
     mata_kuliah,
     nama_kelas,
@@ -148,28 +150,28 @@ const updateSchedule = async (user, reqBody, pathIdMatkul) => {
     jam_selesai,
     jam_mulai,
     ruangan
-  ]
+  ];
   const checkSchedule = await executeParameterizedQuery(connection, queryUpdateSchedule, valuesUpdateSchedule)
-    .then(result => result.affectedRows)
+    .then(result => result.affectedRows);
   if (checkSchedule === 0) {
-    throw new ResponseError (401, 'Jadwal bentrok')
+    throw new ResponseError(401, 'Jadwal bentrok');
   }
 
   // create response
   const queryGetSchedule = `
-    SELECT * FROM \`schedules\` 
+    SELECT * FROM schedules 
     WHERE id_mata_kuliah = ?
-  `
-  const valuesGetSchedule = [IdMatkul]
+  `;
+  const valuesGetSchedule = [IdMatkul];
   const response = await executeParameterizedQuery(connection, queryGetSchedule, valuesGetSchedule)
     .then(result => result[0])
     .catch(error => {
-      throw new ResponseError (501, 'Error getting schedule: ' + error.message)
-    })
+      throw new ResponseError(501, 'Error getting schedule: ' + error.message);
+    });
 
-  connection.end()
-  return response
-}
+  connection.end();
+  return response;
+};
 
 const removeSchedule = async (user, pathIdMatkul) => {
   // create connection
