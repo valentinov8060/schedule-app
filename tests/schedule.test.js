@@ -1,4 +1,5 @@
 import supertest from "supertest";
+import 'dotenv/config';
 
 import {app} from "../src/routers/main-router";
 import {
@@ -16,11 +17,12 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
+  await removeScheduleTest();
   await removeUserTest();
 });
 
 describe("POST /schedule/create", () => {
-  it('It should return success response', async () => {
+  it('It should return success create schedule response', async () => {
     const token = getTokenUserTest();
     const response = await supertest(app)
       .post('/schedule/create')
@@ -64,7 +66,7 @@ describe("POST /schedule/create", () => {
   });
 
   it('It should return error Jadwal Bentrok', async () => {
-    const token = await getTokenUserTest();
+    const token = getTokenUserTest();
     const response = await supertest(app)
       .post('/schedule/create')
       .set('Authorization', token)
@@ -85,10 +87,10 @@ describe("POST /schedule/create", () => {
   });
 }); 
 
-describe("PUT /schedule/update/:id_mata_kuliah", () => {
-  it('It should return success response', async () => {
+describe("PUT /schedule/update", () => {
+  it('It should return success update response', async () => {
     const idMataKuliah = await getIdScheduleTest();
-    const token = await getTokenUserTest();
+    const token = getTokenUserTest();
     const response = await supertest(app)
       .put(`/schedule/update/${idMataKuliah}`)
       .set('Authorization', token)
@@ -111,7 +113,7 @@ describe("PUT /schedule/update/:id_mata_kuliah", () => {
 
   it('It should return error Jadwal bentrok', async () => {
     const idMataKuliah = await getIdScheduleTest();
-    const token = await getTokenUserTest();
+    const token = getTokenUserTest();
     const response = await supertest(app)
       .put(`/schedule/update/${idMataKuliah}`)
       .set('Authorization', token)
@@ -122,7 +124,7 @@ describe("PUT /schedule/update/:id_mata_kuliah", () => {
         hari : "Kamis",
         jam_mulai : "080000",
         jam_selesai : "090000",
-        ruangan  : "Test"
+        ruangan  : "Metan 3.3"
       })
 
       expect(response.status).toEqual(401);
@@ -132,10 +134,10 @@ describe("PUT /schedule/update/:id_mata_kuliah", () => {
   });
 }); 
 
-describe("DELETE /schedule/remove/:id_mata_kuliah", () => {
-  it('It should return success response', async () => {
+describe("DELETE /schedule/remove", () => {
+  it('It should return success delete response', async () => {
     const idMataKuliah = await getIdScheduleTest();
-    const token = await getTokenUserTest();
+    const token = getTokenUserTest();
     const response = await supertest(app)
       .delete(`/schedule/remove/${idMataKuliah}`)
       .set('Authorization', token)
@@ -147,7 +149,7 @@ describe("DELETE /schedule/remove/:id_mata_kuliah", () => {
   });
 
   it('It should return error id_matkul not found or not your schedule', async () => {
-    const token = await getTokenUserTest();
+    const token = getTokenUserTest();
     const response = await supertest(app)
       .delete(`/schedule/remove/7a54d32e-d96f-4d55-af29-254f526420ce`)
       .set('Authorization', token)

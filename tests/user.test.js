@@ -18,7 +18,7 @@ afterAll(async () => {
 });
 
 describe("POST /user/login", () => {
-  it('It should return success response', async () => {
+  it('It should return success login response', async () => {
     const response = await supertest(app)
       .post('/user/login')
       .send({
@@ -62,7 +62,7 @@ describe("POST /user/login", () => {
 }); 
 
 describe("GET /user/authentication", () => {
-  it('It should return success response authentication', async () => {
+  it('It should return success authentication response', async () => {
     const token = getTokenUserTest();
     const response = await supertest(app)
       .get('/user/authentication')

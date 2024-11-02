@@ -24,7 +24,7 @@ const getTokenUserTest = () => {
 }
 
 const removeScheduleTest = async () => {
-  await executeQuery(`DELETE FROM \`schedules\` WHERE user = 'test'`)
+  await executeQuery(`DELETE FROM \`schedules\` WHERE mata_kuliah  = 'Test'`)
 }
 
 const getIdScheduleTest = async () => {

@@ -1,4 +1,5 @@
 import mysql from 'mysql';
+import { ResponseError } from "../error/error.js";
 
 async function executeQuery(query, values = []) {
   const connection = mysql.createConnection({

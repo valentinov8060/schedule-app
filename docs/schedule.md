@@ -67,16 +67,16 @@ Request Body :
 Response Body Success :
 ```json
 {
-  "data" : {
-    "user": "211510001",
-    "id_mata_kuliah" : "unique-id",
-    "mata_kuliah" : "METODOLOGI PENELITIAN	",
-    "nama_kelas" : "MP-A",
-    "sks" : "2",
-    "hari" : "selasa",
-    "jam_mulai" : "080000",
-    "jam_selesai" : "090000",
-    "ruangan" : "H18"
+  "data": {
+    "id_mata_kuliah": "0c2ad76f-a142-4bae-87e1-2115572362c5",
+    "mata_kuliah": "OOP",
+    "nama_kelas": "OOP-C",
+    "sks": 4,
+    "hari": "Senin",
+    "jam_mulai": "10:00:00",
+    "jam_selesai": "11:00:00",
+    "ruangan": "H19",
+    "user": "2115061073"
   }
 }
 ```
