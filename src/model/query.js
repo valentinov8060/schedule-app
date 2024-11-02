@@ -1,30 +1,50 @@
-function executeQuery(connection, query) {
-  return new Promise((resolve, reject) => {
-    connection.query(query, (err, result) => {
-      if (err) {
-        reject(err);
-      }
-      resolve(result);
-    });
-  });
-}
+import mysql from 'mysql';
 
-function executeParameterizedQuery(connection, query, values) {
-  return new Promise((resolve, reject) => {
-    connection.query(query, values, (err, result) => {
-      if (err) {
-        reject(err);
-      }
-      resolve(result);
-    });
+async function executeQuery(query, values = []) {
+  const connection = mysql.createConnection({
+    database: process.env.DB_NAME,
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    port: process.env.DB_PORT,
+    password: process.env.PASSWORD,
   });
+
+  try {
+    // Menunggu koneksi ke database tersambung
+    await new Promise((resolve, reject) => {
+      connection.connect(err => {
+        if (err) {
+          return reject(new ResponseError(500, 'Failed to connect to the database: ' + err.message));
+        }
+        resolve();
+      });
+    });
+
+    // Menjalankan query
+    const result = await new Promise((resolve, reject) => {
+      connection.query(query, values, (err, result) => {
+        if (err) {
+          return reject(new ResponseError(500, 'Query execution failed: ' + err.message));
+        }
+        resolve(result);
+      });
+    });
+
+    return result;
+
+  } finally {
+    // Menutup koneksi untuk menghindari kebocoran
+    connection.end(err => {
+      if (err) {
+        console.error('Error closing connection:', err.message);
+      }
+    });
+  }
 }
 
 export {
-  executeQuery,
-  executeParameterizedQuery
+  executeQuery
 }
-
 
 
 // add user

@@ -1,8 +1,7 @@
-import mysql from 'mysql'
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 
-import { executeQuery, executeParameterizedQuery } from "../model/query.js";
+import { executeQuery } from "../model/query.js";
 import { validation } from "../validation/validation.js";
 import { 
   loginUserValidationSchema
@@ -10,9 +9,6 @@ import {
 import { ResponseError } from "../error/error.js";
 
 const loginUser = async (reqBody) => {
-  // create connection
-  const connection = mysql.createConnection('mysql://root@localhost:3306/schedule-app');
-
   // check request body
   const reqBodyValidation = validation(loginUserValidationSchema, reqBody)
   // check user from request body
@@ -21,7 +17,7 @@ const loginUser = async (reqBody) => {
     WHERE user = ?;
   `
   const valuesGetUserPasswordByReqBodyUser = [reqBodyValidation.user]
-  const getUserPasswordByReqBodyUser = await executeParameterizedQuery(connection, queryGetUserPasswordByReqBodyUser, valuesGetUserPasswordByReqBodyUser)
+  const getUserPasswordByReqBodyUser = await executeQuery(queryGetUserPasswordByReqBodyUser, valuesGetUserPasswordByReqBodyUser)
     .then(result => result[0])
     .catch(error => {
       return error.message
@@ -40,8 +36,7 @@ const loginUser = async (reqBody) => {
     user : reqBodyValidation.user
   };
 
-  connection.end()
-  return jwt.sign(payload, 'valentinov', { expiresIn: '1h' });
+  return { token: jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }) }
 } 
 
 export {

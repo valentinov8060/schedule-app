@@ -14,8 +14,9 @@ const login = async (req, res, next) => {
 }
 
 const authentication = async (req, res, next) => {
+  const view = `Token user ${req.auth} is authorized`
   res.status(200).json({
-    data: `Token user ${req.auth} is authorized`
+    data: view
   })
 }
 

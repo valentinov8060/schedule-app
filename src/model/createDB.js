@@ -4,10 +4,10 @@
 /* import mysql from 'mysql';
 
 const connectionCreateDB = mysql.createConnection({
-  host: 'localhost', // atau IP address dari MySQL server Anda
-  user: 'root',
-  port: 3306,
-  password: '' // tambahkan password jika ada
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  port: process.env.DB_PORT,
+  password: process.env.PASSWORD,
 });
 
 const createTableUserQuery = `
@@ -21,7 +21,7 @@ const createTableScheduleQuery = `
   CREATE TABLE IF NOT EXISTS \`schedule-app\`.\`schedules\` (
     id_mata_kuliah VARCHAR(36) PRIMARY KEY,
     mata_kuliah VARCHAR(255) NOT NULL,
-    nama_kelas VARCHAR(5) NOT NULL,
+    nama_kelas VARCHAR(5) NOT NULL UNIQUE,
     sks INT NOT NULL,
     hari ENUM('Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu') NOT NULL,
     jam_mulai TIME NOT NULL,

@@ -30,7 +30,7 @@ Response Body Error :
 
 ## 2. Token User API
 
-Private endpoint : GET /user/token
+Private endpoint : GET /user/authentication
 
 Headers :
 - Authorization : token

@@ -21,7 +21,7 @@ afterAll(async () => {
 
 describe("POST /schedule/create", () => {
   it('It should return success response', async () => {
-    const token = await getTokenUserTest();
+    const token = getTokenUserTest();
     const response = await supertest(app)
       .post('/schedule/create')
       .set('Authorization', token)
@@ -43,7 +43,7 @@ describe("POST /schedule/create", () => {
   });
 
   it('It should return error Kelas sudah ada', async () => {
-    const token = await getTokenUserTest();
+    const token = getTokenUserTest();
     const response = await supertest(app)
       .post('/schedule/create')
       .set('Authorization', token)

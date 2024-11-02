@@ -2,7 +2,7 @@ import mysql from 'mysql'
 import jwt from 'jsonwebtoken'
 import Joi from 'joi'
 
-import { executeQuery, executeParameterizedQuery } from "../model/query.js"
+import { executeQuery } from "../model/query.js"
 
 const authMiddleware = async (req, res, next) => {
   const token = req.get('Authorization')
@@ -15,14 +15,14 @@ const authMiddleware = async (req, res, next) => {
       error: `${tokenValidationSchema.validate(token).error}` 
     }).end()
   } else {
-    const tokenDecoded = jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => (err ? err : decoded)) 
+    const tokenDecoded = jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => err || decoded) 
     if(!tokenDecoded.user) {
       res.status(401).json({ 
         error: `${tokenDecoded}` 
       }).end()
     } else {
       const connection = mysql.createConnection('mysql://root@localhost:3306/schedule-app');
-      const user = await executeParameterizedQuery(connection, `SELECT user FROM \`users\` WHERE user = ?`, [tokenDecoded.user])
+      const user = await executeQuery(`SELECT user FROM \`users\` WHERE user = ?`, [tokenDecoded.user])
         .then(result => result[0].user)
       connection.end()
 
@@ -35,9 +35,7 @@ const authMiddleware = async (req, res, next) => {
         next()
       }
     }
-
   }
-
 }
 
 export {
