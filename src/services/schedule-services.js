@@ -1,5 +1,4 @@
 import { v4 as uuidv4 } from 'uuid';
-import mysql from 'mysql';
 
 import { executeQuery } from "../model/query.js";
 import { validation } from "../validation/validation.js";
@@ -11,6 +10,20 @@ import {
   clockValidation
 } from "../validation/schedule-validation.js";
 import { ResponseError } from "../error/error.js";
+
+function getDayOrder(dayName) {
+  const daysOfWeek = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+  return daysOfWeek.indexOf(dayName);
+}
+function sortSchedules(a, b) {
+  if (getDayOrder(a.hari) > getDayOrder(b.hari)) return 1;
+  if (getDayOrder(a.hari) < getDayOrder(b.hari)) return -1;
+
+  if (a.jam_mulai > b.jam_mulai) return 1;
+  if (a.jam_mulai < b.jam_mulai) return -1;
+
+  return 0;
+}
 
 const createSchedule = async (user, reqBody) => {
   // check request body
@@ -195,46 +208,29 @@ const removeSchedule = async (user, pathIdMatkul) => {
 
   // remove data
   await executeQuery(`DELETE FROM \`schedules\` WHERE id_mata_kuliah = ?`, [IdMatkulUser])
+    .then(result => result.affectedRows)
+    .catch(error => {
+      throw new ResponseError (501, 'Error, id_matkul not found or not your schedule: ' + error.message) 
+    })
 }
 
 const listSchedule = async () => {
-  // create connection
-  const connection = mysql.createConnection('mysql://root@localhost:3306/schedule-app');
-
   // get data
   const queryGetSchedule = `
     SELECT id_mata_kuliah, mata_kuliah, nama_kelas, sks, hari, jam_mulai, jam_selesai, ruangan, user
     FROM \`schedules\`
   `
-  const sechedules = await executeQuery(connection, queryGetSchedule)
+  const sechedules = await executeQuery(queryGetSchedule)
     .then(result => result)
     .catch(error => {
       throw new ResponseError (501, 'Error getting schedule: ' + error.message)
     })
 
   // manage data
-  function getDayOrder(dayName) {
-    const daysOfWeek = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-    return daysOfWeek.indexOf(dayName);
-  }
-  function sortSchedules(a, b) {
-    if (getDayOrder(a.hari) > getDayOrder(b.hari)) return 1;
-    if (getDayOrder(a.hari) < getDayOrder(b.hari)) return -1;
-
-    if (a.jam_mulai > b.jam_mulai) return 1;
-    if (a.jam_mulai < b.jam_mulai) return -1;
-
-    return 0;
-  }
-
-  connection.end()
   return sechedules.sort(sortSchedules)
 }
 
 const getUserSchedule = async (pathUser) => {
-  // create connection
-  const connection = mysql.createConnection('mysql://root@localhost:3306/schedule-app');
-
   // check query path
   const userValidation = validation(getUserScheduleValidationSchema, pathUser)
   // check user from table
@@ -243,7 +239,7 @@ const getUserSchedule = async (pathUser) => {
     WHERE user = ?
   `
   const valuesCheckUser = [userValidation]
-  const user = await executeQuery(connection, queryCheckUser, valuesCheckUser)
+  const user = await executeQuery(queryCheckUser, valuesCheckUser)
     .then(result => result[0].user)
     .catch(error => {
       throw new ResponseError (401, 'Error, user not found: ' + error.message) 
@@ -256,30 +252,14 @@ const getUserSchedule = async (pathUser) => {
     WHERE user = ?
   `
   const valuesGetUserSchedule = [user]
-  const sechedules = await executeQuery(connection, queryGetUserSchedule, valuesGetUserSchedule)
+  const sechedules = await executeQuery(queryGetUserSchedule, valuesGetUserSchedule)
     .then(result => result)
     .catch(error => {
       throw new ResponseError (501, 'Error getting schedule: ' + error.message)
     })
 
   // manage data
-  function getDayOrder(dayName) {
-    const daysOfWeek = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-    return daysOfWeek.indexOf(dayName);
-  }
-  function sortSchedules(a, b) {
-    if (getDayOrder(a.hari) > getDayOrder(b.hari)) return 1;
-    if (getDayOrder(a.hari) < getDayOrder(b.hari)) return -1;
-
-    if (a.jam_mulai > b.jam_mulai) return 1;
-    if (a.jam_mulai < b.jam_mulai) return -1;
-
-    return 0;
-  }
-  sechedules.sort(sortSchedules)
-
-  connection.end()
-  return sechedules
+  return sechedules.sort(sortSchedules)
 }
 
 export {

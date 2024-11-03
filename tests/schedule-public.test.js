@@ -1,9 +1,11 @@
 import supertest from "supertest";
+import dotenv from 'dotenv';
+dotenv.config();
 
 import {app} from "../src/routers/main-router";
 
 describe("GET /schedule/list", () => {
-  it('It should return success response', async () => {
+  it('It should return success list response', async () => {
     const response = await supertest(app)
       .get('/schedule/list')
 
@@ -15,7 +17,7 @@ describe("GET /schedule/list", () => {
 }); 
 
 describe("GET /schedule/user/:user", () => {
-  it('It should return success response', async () => {
+  it('It should return success list user schedule response', async () => {
     const response = await supertest(app)
       .get('/schedule/user/2115061073')
 

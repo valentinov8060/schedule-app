@@ -1,5 +1,4 @@
 import mysql from 'mysql';
-import { ResponseError } from "../error/error.js";
 
 async function executeQuery(query, values = []) {
   const connection = mysql.createConnection({
@@ -15,7 +14,7 @@ async function executeQuery(query, values = []) {
     await new Promise((resolve, reject) => {
       connection.connect(err => {
         if (err) {
-          return reject(new ResponseError(500, 'Failed to connect to the database: ' + err.message));
+          return reject(new Error('Failed to connect to the database: ' + err.message));
         }
         resolve();
       });
@@ -25,23 +24,18 @@ async function executeQuery(query, values = []) {
     const result = await new Promise((resolve, reject) => {
       connection.query(query, values, (err, result) => {
         if (err) {
-          return reject(new ResponseError(500, 'Query execution failed: ' + err.message));
+          return reject(new Error('Query execution failed: ' + err.message));
         }
         resolve(result);
       });
     });
-
     return result;
 
   } finally {
-    // Menutup koneksi untuk menghindari kebocoran
-    connection.end(err => {
-      if (err) {
-        console.error('Error closing connection:', err.message);
-      }
-    });
+    connection.end();
   }
 }
+
 
 export {
   executeQuery
