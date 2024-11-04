@@ -1,6 +1,6 @@
 // mysql://USER:PASSWORD@HOST:PORT/DATABASE 
 
-// Run this code if dont have database
+// Run this code if you don't have database
 /* import mysql from 'mysql';
 
 const connectionCreateDB = mysql.createConnection({

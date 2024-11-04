@@ -1,0 +1,23 @@
+-- Membuat Database
+CREATE DATABASE IF NOT EXISTS `schedule-app`;
+USE `schedule-app`;
+
+-- Membuat Tabel users
+CREATE TABLE IF NOT EXISTS `users` (
+    user VARCHAR(255) PRIMARY KEY,
+    password VARCHAR(255) NOT NULL
+);
+
+-- Membuat Tabel schedules
+CREATE TABLE IF NOT EXISTS `schedules` (
+    id_mata_kuliah VARCHAR(36) PRIMARY KEY,
+    mata_kuliah VARCHAR(255) NOT NULL,
+    nama_kelas VARCHAR(5) NOT NULL UNIQUE,
+    sks INT NOT NULL,
+    hari ENUM('Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu') NOT NULL,
+    jam_mulai TIME NOT NULL,
+    jam_selesai TIME NOT NULL,
+    ruangan VARCHAR(255) NOT NULL,
+    user VARCHAR(255),
+    FOREIGN KEY (user) REFERENCES users(user)
+);

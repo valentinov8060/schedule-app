@@ -16,4 +16,5 @@ DB_USER=
 DB_PORT=
 DB_PASSWORD= 
 ```
-3. Create database according createDB.js
+3. Create database according file createDB.js or query DB.txt in src/model
+4. Create user according file query.js in src/model

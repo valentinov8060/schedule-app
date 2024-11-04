@@ -44,14 +44,12 @@ export {
 
 // add user
 /* import bycrypt from 'bcrypt'
-import mysql from 'mysql'
 
-const user = "2115061077"
-let password = "2115061077"
+const user = "..."
+let password = "..."
 password = bycrypt.hashSync(password, 10)
 
-var connection = mysql.createConnection('mysql://root@localhost:3306/schedule-app');
-executeQuery(connection, `INSERT INTO \`users\` (user, password) VALUES ('${user}', '${password}')`)
+executeQuery(`INSERT INTO \`users\` (user, password) VALUES ('${user}', '${password}')`)
   .then(result => console.log(result))
-connection.end()
+  .catch(error => console.log(error))
  */
